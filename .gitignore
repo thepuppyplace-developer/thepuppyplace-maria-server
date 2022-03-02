@@ -1,4 +1,23 @@
+# AWS Access Key
+s3.json
+
+# firebase admin token
+serviceAccountKey.json
+
+# EC2 pemKey
+reve21-nodejs-server.pem
+
+# package
+package-lock.json
+
+#models
+models
+
+#vscode setting folder
+.vscode
+
 # Logs
+serverLog
 logs
 *.log
 npm-debug.log*
@@ -102,3 +121,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# API docs
+apiDoc
+apidoc.json
+
+.DS_Store
