@@ -32,6 +32,12 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true, // 테이블을 삭제할 수 없게되며, 삭제요청시 deleteType이 수정된다.
     }
   );
-  Board.associate = (models) => {};
+  Board.associate = (models) => {
+    Board.belongsToMany(models.User, { through: "Board_like" });
+    Board.hasOne(models.Board_photo, {
+      foreignKey: "BoardId",
+      sourceKey: "id",
+    });
+  };
   return Board;
 };

@@ -52,7 +52,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   User.associate = (models) => {
-    User.hasOne(models.Board, { foreignKey: "user_id", sourceKey: "id" });
+    User.hasOne(models.Board, { foreignKey: "UserId", sourceKey: "id" });
+    User.hasOne(models.Notification, {
+      foreignKey: "UserId",
+      sourceKey: "id",
+    });
+    User.hasOne(models.Consult, { foreignKey: "UserId", sourceKey: "id" });
+    User.belongsToMany(models.Board, { through: "Board_like" });
+    User.belongsToMany(models.Board, { through: "Board_like" });
   };
   return User;
 };
