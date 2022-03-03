@@ -10,9 +10,6 @@ reve21-nodejs-server.pem
 # package
 package-lock.json
 
-#models
-models
-
 #vscode setting folder
 .vscode
 
