@@ -27,7 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Consult.associate = (models) => {
-    Consult.belongsTo(models.User, { foreignKey: "user_id", sourceKey: "id" });
+    Consult.hasMany(models.ConsultPhoto, {
+      foreignKey: "consult_id",
+      sourceKey: "id",
+    });
   };
   return Consult;
 };

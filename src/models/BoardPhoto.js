@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Board_photo = sequelize.define(
-    "Board_photo",
+  const BoardPhoto = sequelize.define(
+    "BoardPhoto",
     {
       photo_url: {
         type: DataTypes.STRING(100),
@@ -11,16 +11,17 @@ module.exports = (sequelize, DataTypes) => {
     {
       charset: "utf8",
       collate: "utf8_general_ci",
-      timestapms: true,
-      tableName: "Board_photo",
-      paranoid: true,
+      tableName: "BoardPhoto",
+      timestamps: false,
+      paranoid: false,
     }
   );
-  Board_photo.associate = (models) => {
-    Board_photo.belongsTo(models.Board, {
+  BoardPhoto.associate = (models) => {
+    BoardPhoto.belongsTo(models.Board, {
       foreignKey: "board_id",
       sourceKey: "id",
     });
   };
-  return Board_photo;
+
+  return BoardPhoto;
 };

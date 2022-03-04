@@ -33,9 +33,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Board.associate = (models) => {
-    Board.belongsToMany(models.User, { through: "Board_like" });
-    Board.hasOne(models.Board_photo, {
-      foreignKey: "BoardId",
+    Board.hasMany(models.BoardPhoto, {
+      foreignKey: "board_id",
+      sourceKey: "id",
+    });
+
+    Board.hasMany(models.BoardComment, {
+      foreignKey: "board_id",
+      sourceKey: "id",
+    });
+
+    Board.hasMany(models.BoardCategory, {
+      foreignKey: "board_id",
       sourceKey: "id",
     });
   };

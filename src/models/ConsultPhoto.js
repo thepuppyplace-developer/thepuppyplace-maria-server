@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Consult_photo = sequelize.define(
-    "Consult_photo",
+  const ConsultPhoto = sequelize.define(
+    "ConsultPhoto",
     {
       photo_url: {
         type: DataTypes.STRING(100),
@@ -11,16 +11,16 @@ module.exports = (sequelize, DataTypes) => {
     {
       charset: "utf8",
       collate: "utf8_general_ci",
-      timestapms: true,
-      tableName: "Consult_photo",
-      paranoid: true,
+      timestapms: false,
+      tableName: "ConsultPhoto",
+      paranoid: false,
     }
   );
-  Consult_photo.associate = (models) => {
-    Consult_photo.belongsTo(models.Consult, {
+  ConsultPhoto.associate = (models) => {
+    ConsultPhoto.belongsTo(models.Consult, {
       foreignKey: "consult_id",
       sourceKey: "id",
     });
   };
-  return Consult_photo;
+  return ConsultPhoto;
 };

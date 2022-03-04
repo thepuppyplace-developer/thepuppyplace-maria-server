@@ -52,14 +52,22 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   User.associate = (models) => {
-    User.hasOne(models.Board, { foreignKey: "UserId", sourceKey: "id" });
-    User.hasOne(models.Notification, {
-      foreignKey: "UserId",
+    User.hasMany(models.Board, { foreignKey: "user_id", sourceKey: "id" });
+    User.hasMany(models.BoardComment, {
+      foreignKey: "user_id",
       sourceKey: "id",
     });
-    User.hasOne(models.Consult, { foreignKey: "UserId", sourceKey: "id" });
-    User.belongsToMany(models.Board, { through: "Board_like" });
-    User.belongsToMany(models.Board, { through: "Board_like" });
+    User.hasMany(models.BoardCommentComment, {
+      foreignKey: "user_id",
+      sourceKey: "id",
+    });
+    User.hasMany(models.BoardCommentLike, {
+      foreignKey: "user_id",
+      sourceKey: "id",
+    });
+    User.hasMany(models.Consult, { foreignKey: "user_id", sourceKey: "id" });
+    User.hasMany(models.UserPhoto, { foreignKey: "user_id", sourceKey: "id" });
+    User.hasMany(models.BoardLike, { foreignKey: "user_id", sourceKey: "id" });
   };
   return User;
 };
