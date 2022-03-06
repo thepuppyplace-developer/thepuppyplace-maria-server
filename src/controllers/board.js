@@ -23,7 +23,16 @@ module.exports = {
 
   async findAllBoard(req, res, next) {
     try {
-      const boardList = await Board.findAll({});
+      const boardList = await Board.findAll({
+        inclued: [
+          {
+            model: User,
+            as: "user_id",
+            attributes: ["email"],
+          },
+        ],
+        order: [["title", "DESC"]],
+      });
       return res.status(200).json({
         message: "found-all-board",
         data: boardList,
