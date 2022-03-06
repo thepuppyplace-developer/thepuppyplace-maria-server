@@ -1,5 +1,4 @@
 const { User } = require("../models/index");
-require("dotenv").config();
 
 module.exports = {
   async emailcheck(req, res, next) {
