@@ -8,7 +8,7 @@ app.use(express.json());
 
 app.use("/", require("./src/routes/index"));
 
-sequelize.sync({ force: true }, (error) => {
+sequelize.sync((error) => {
   if (error) {
     return console.error(err, "📟Error Connection To Database📟");
   } else {
