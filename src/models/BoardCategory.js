@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: false,
       charset: "utf8",
       collate: "utf8_general_ci",
-      // tableName: "BoardCategory",
+      tableName: "BoardCategory",
     }
   );
   BoardCategory.associate = (models) => {

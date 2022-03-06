@@ -1,4 +1,5 @@
 const { User } = require("../models/index");
+require("dotenv").config();
 
 module.exports = {
   async emailcheck(req, res, next) {
@@ -70,11 +71,19 @@ module.exports = {
     }
   },
 
-  findAllUser(req, res, next) {
+  async findAllUser(req, res, next) {
     try {
-      return User.findAll().then((userList) =>
-        res.status(userList ? 200 : 204).json({ userList })
-      );
+      var userList = await User.findAll({
+        order: [["nickname", "DESC"]],
+      });
+      if (userList) {
+        return res.status(200).json({
+          message: "found-all-user",
+          data: userList,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }

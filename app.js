@@ -9,7 +9,7 @@ app.use(express.json());
 app.use("/", require("./src/routes/index"));
 
 sequelize
-  .sync() //{ force: true } <- DB 초기화
+  .sync({ force: true }) //{ force: true } <- DB 초기화
   .then(() =>
     console.log(` 🐱 Connected To Maria Database 🐱
 ####################################

@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       charset: "utf8", // 한국어 설정
       collate: "utf8_general_ci", // 한국어 설정
       timestamps: true, // createAt & updateAt 활성화
-      // tableName: "Board",
+      tableName: "Board",
       paranoid: true, // 테이블을 삭제할 수 없게되며, 삭제요청시 deleteType이 수정된다.
     }
   );
@@ -45,6 +45,11 @@ module.exports = (sequelize, DataTypes) => {
 
     Board.hasMany(models.BoardCategory, {
       foreignKey: "board_id",
+      sourceKey: "id",
+    });
+
+    Board.belongsTo(models.User, {
+      foreignKey: "user_id",
       sourceKey: "id",
     });
   };
