@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       charset: "utf8",
       collate: "utf8_general_ci",
       timestamps: true,
-      tableName: "Consult",
+      // tableName: "Consult",
       paranoid: true,
     }
   );

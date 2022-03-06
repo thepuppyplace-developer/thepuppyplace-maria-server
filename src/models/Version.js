@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: false,
       charset: "utf8",
       collate: "utf8_general_ci",
-      tableName: "Version",
+      // tableName: "Version",
     }
   );
   return Version;

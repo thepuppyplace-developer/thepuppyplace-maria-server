@@ -8,15 +8,14 @@ app.use(express.json());
 
 app.use("/", require("./src/routes/index"));
 
-sequelize.sync((error) => {
-  if (error) {
-    return console.error(err, "📟Error Connection To Database📟");
-  } else {
-    return console.log(` 🐱 Connected To Maria Database 🐱
-          ####################################
-          `);
-  }
-}); //{ force: true } <- DB 초기화
+sequelize
+  .sync({ force: true }) //{ force: true } <- DB 초기화
+  .then(() =>
+    console.log(` 🐱 Connected To Maria Database 🐱
+####################################
+`)
+  )
+  .catch((err) => console.error(err, "📟Error Connection To Database📟"));
 
 app.listen(process.env.PORT, (error) => {
   if (error) {

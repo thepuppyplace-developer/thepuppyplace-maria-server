@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
       charset: "utf8",
       collate: "utf8_general_ci",
-      tableName: "BoardLike",
+      // tableName: "BoardLike",
     }
   );
   BoardLike.associate = (models) => {
