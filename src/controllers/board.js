@@ -27,7 +27,7 @@ module.exports = {
         inclued: [
           {
             model: User,
-            as: "user_id",
+            as: "user_email",
             attributes: ["email"],
           },
         ],
