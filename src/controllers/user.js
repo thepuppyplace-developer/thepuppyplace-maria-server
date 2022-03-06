@@ -6,9 +6,11 @@ module.exports = {
     try {
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
-        return res.status(400).json({ message: "already-user-email" });
+        return res
+          .status(400)
+          .json({ message: "already-user-email", check: false });
       } else {
-        return res.status(200).json({ message: "can-use-email" });
+        return res.status(200).json({ message: "can-use-email", check: true });
       }
     } catch (error) {
       return next(error);
@@ -21,9 +23,13 @@ module.exports = {
         where: { nickname: req.body.nickname },
       });
       if (user) {
-        return res.status(400).json({ message: "already-user-nickname" });
+        return res
+          .status(400)
+          .json({ message: "already-user-nickname", check: false });
       } else {
-        return res.status(200).json({ message: "can-use-nickname" });
+        return res
+          .status(200)
+          .json({ message: "can-use-nickname", check: true });
       }
     } catch (error) {
       return next(error);
