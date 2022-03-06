@@ -27,10 +27,6 @@ module.exports = {
         include: [
           {
             model: User,
-            where: {
-              id: 1,
-            },
-            attributes: ["email"],
           },
         ],
       });

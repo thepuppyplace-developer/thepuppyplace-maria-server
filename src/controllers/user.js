@@ -76,14 +76,10 @@ module.exports = {
       var userList = await User.findAll({
         order: [["nickname", "DESC"]],
       });
-      if (userList) {
-        return res.status(200).json({
-          message: "found-all-user",
-          data: userList,
-        });
-      } else {
-        return res.status(204).json();
-      }
+      return res.status(200).json({
+        message: "found-all-user",
+        data: userList,
+      });
     } catch (error) {
       return next(error);
     }
