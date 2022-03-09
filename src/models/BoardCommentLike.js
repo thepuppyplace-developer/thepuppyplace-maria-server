@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "user_id",
       sourceKey: "id",
     });
+
+    BoardCommentLike.belongsTo(models.Board, {
+      foreignKey: "board_id",
+      sourceKey: "id",
+    });
+
     BoardCommentLike.belongsTo(models.BoardComment, {
       foreignKey: "board_comment_id",
       sourceKey: "id",
