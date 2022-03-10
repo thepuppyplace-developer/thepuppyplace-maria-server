@@ -4,9 +4,10 @@ const controllers = require("../controllers/index");
 router.route("/signup").post(controllers.user.signup);
 
 router
-  .route("/updateuser/:id")
-  .patch(controllers.user.updateUser)
-  .delete(controllers.user.deleteUser);
+  .route("/:id")
+  .get(controllers.user.findUser)
+  .patch(controllers.user.update)
+  .delete(controllers.user.delete);
 
 router.route("/emailcheck").post(controllers.user.emailcheck);
 

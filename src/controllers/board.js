@@ -4,18 +4,20 @@ const {
   BoardLike,
   BoardCommentComment,
   BoardCommentLike,
+  BoardPhoto,
+  BoardCategory,
   User,
-  UserPhoto,
 } = require("../models/index");
 
 module.exports = {
   async insert(req, res, next) {
     try {
       const board = new Board(req.body);
+      board.user_id = req.params.user_id;
       board.save();
       return res.status(201).json({
         message: "insert-board",
-        board: board,
+        data: board,
       });
     } catch (error) {
       return next(error);
@@ -25,11 +27,12 @@ module.exports = {
   async insertBoardComment(req, res, next) {
     try {
       const comment = new BoardComment(req.body);
+      comment.user_id = req.params.user_id;
       comment.board_id = req.params.board_id;
       comment.save();
       return res.status(201).json({
-        message: `insert-comment-board: ${req.params.board_id}`,
-        comment: comment,
+        message: `insert-board-comment`,
+        data: comment,
       });
     } catch (error) {
       return next(error);
@@ -39,12 +42,13 @@ module.exports = {
   async insertBoardCommentComment(req, res, next) {
     try {
       const comment = new BoardCommentComment(req.body);
+      comment.user_id = req.params.user_id;
       comment.board_id = req.params.board_id;
       comment.board_comment_id = req.params.board_comment_id;
       comment.save();
       return res.status(201).json({
-        message: `insert-comment_of_comment: ${req.params.board_comment_id}, board: ${req.params.board_id}`,
-        comment: comment,
+        message: `insert-comment-of-comment`,
+        data: comment,
       });
     } catch (error) {
       return next(error);
@@ -53,13 +57,59 @@ module.exports = {
 
   async likeBoard(req, res, next) {
     try {
-      const like = new BoardLike(req.body);
-      like.board_id = req.params.board_id;
-      like.save();
-      return res.status(201).json({
-        message: `like-board: ${req.params.board_id}`,
-        like: like,
+      const check = await BoardLike.findOne({
+        where: {
+          board_id: req.params.board_id,
+          user_id: req.params.user_id,
+        },
       });
+      if (check) {
+        return res.status(204).json();
+      } else {
+        const like = new BoardLike(req.body);
+        like.user_id = req.params.user_id;
+        like.board_id = req.params.board_id;
+        like.save();
+        if (like) {
+          return res.status(201).json({
+            message: `like-board`,
+            data: like,
+          });
+        } else {
+          return res.status(204).json();
+        }
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async unlikeBoard(req, res, next) {
+    try {
+      const check = await BoardLike.findOne({
+        where: {
+          board_id: req.params.board_id,
+          user_id: req.params.user_id,
+        },
+      });
+      if (check) {
+        const like = await BoardLike.destroy({
+          where: {
+            board_id: req.params.board_id,
+            user_id: req.params.user_id,
+          },
+        });
+        if (like) {
+          return res.status(200).json({
+            message: `unlike-board-${req.params.board_id}`,
+            data: like,
+          });
+        } else {
+          return res.status(204).json();
+        }
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }
@@ -67,14 +117,136 @@ module.exports = {
 
   async likeBoardComment(req, res, next) {
     try {
-      const like = new BoardCommentLike(req.body);
-      like.board_id = req.params.board_id;
-      like.board_comment_id = req.params.board_comment_id;
-      like.save();
-      return res.status(201).json({
-        message: `like-board_comment: ${req.body.board_comment_id}, board: ${req.body.board_id}`,
-        like: like,
+      const check = await BoardCommentLike.findOne({
+        where: {
+          board_id: req.params.board_id,
+          board_comment_id: req.params.board_comment_id,
+          user_id: req.params.user_id,
+        },
       });
+      if (check) {
+        return res.status(204).json();
+      } else {
+        const like = new BoardCommentLike(req.body);
+        like.user_id = req.params.user_id;
+        like.board_id = req.params.board_id;
+        like.board_comment_id = req.params.board_comment_id;
+        like.save();
+        return res.status(201).json({
+          message: `like-board-comment: ${req.params.board_comment_id}`,
+          data: like,
+        });
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async unlikeBoardComment(req, res, next) {
+    try {
+      const check = await BoardCommentLike.findOne({
+        where: {
+          board_id: req.params.board_id,
+          board_comment_id: req.params.board_comment_id,
+          user_id: req.params.user_id,
+        },
+      });
+      if (check) {
+        const like = await BoardCommentLike.destroy({
+          where: {
+            board_id: req.params.board_id,
+            board_comment_id: req.params.board_comment_id,
+            user_id: req.params.user_id,
+          },
+        });
+        if (like) {
+          return res.status(200).json({
+            message: `unlike-board-comment-${req.params.board_comment_id}`,
+            data: like,
+          });
+        } else {
+          return res.status(204).json();
+        }
+      } else {
+        return res.status(204).json();
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async findBoard(req, res, next) {
+    try {
+      const board = await Board.findOne({
+        where: {
+          id: req.params.id,
+        },
+        include: [
+          {
+            model: User,
+            attributes: ["nickname", "photo_url"],
+          },
+          {
+            model: BoardPhoto,
+            attributes: ["photo_url"],
+          },
+          {
+            model: BoardComment,
+            attributes: ["comment"],
+            include: [
+              {
+                model: User,
+                attributes: ["nickname", "photo_url"],
+                include: [
+                  {
+                    model: BoardCommentComment,
+                    attributes: ["comment"],
+                    include: [
+                      {
+                        model: User,
+                        attributes: ["nickname", "photo_url"],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+            order: [["createdAt", "DESC"]],
+          },
+          {
+            model: BoardLike,
+            include: [
+              {
+                model: User,
+                attributes: ["nickname", "photo_url"],
+              },
+            ],
+            order: [["createdAt", "DESC"]],
+          },
+          {
+            model: BoardCommentLike,
+            include: [
+              {
+                model: User,
+                attributes: ["nickname", "photo_url"],
+              },
+            ],
+            order: [["createdAt", "DESC"]],
+          },
+          {
+            model: BoardCategory,
+            order: [["category", "DESC"]],
+          },
+        ],
+      });
+      if (board) {
+        return res.status(200).json({
+          message: `found-baord-${req.params.id}`,
+          data: board,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }
@@ -86,21 +258,107 @@ module.exports = {
         include: [
           {
             model: User,
-            attributes: ["nickname"],
+            attributes: ["nickname", "photo_url"],
+          },
+          {
+            model: BoardPhoto,
+            attributes: ["photo_url"],
+          },
+          {
+            model: BoardComment,
+            attributes: ["comment"],
             include: [
               {
-                model: UserPhoto,
-                attributes: ["photo_url"],
+                model: User,
+                attributes: ["nickname", "photo_url"],
+                include: [
+                  {
+                    model: BoardCommentComment,
+                    attributes: ["comment"],
+                    include: [
+                      {
+                        model: User,
+                        attributes: ["nickname", "photo_url"],
+                      },
+                    ],
+                  },
+                ],
               },
             ],
+            order: [["createdAt", "DESC"]],
+          },
+          {
+            model: BoardLike,
+            include: [
+              {
+                model: User,
+                attributes: ["nickname", "photo_url"],
+              },
+            ],
+            order: [["createdAt", "DESC"]],
+          },
+          {
+            model: BoardCommentLike,
+            include: [
+              {
+                model: User,
+                attributes: ["nickname", "photo_url"],
+              },
+            ],
+            order: [["createdAt", "DESC"]],
+          },
+          {
+            model: BoardCategory,
+            order: [["category", "DESC"]],
           },
         ],
-        order: [["title", "DESC"]],
+        order: [["createdAt", "DESC"]],
       });
       return res.status(200).json({
         message: "found-all-board",
         data: boardList,
       });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async update(req, res, next) {
+    try {
+      const board = await Board.findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+      if (board) {
+        board.update(req.body);
+        return res.status(200).json({
+          message: `updated-board-${req.params.id}`,
+          data: board,
+        });
+      } else {
+        return res.status(204).json();
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async delete(req, res, next) {
+    try {
+      const board = await Board.destroy({
+        where: {
+          id: req.params.id,
+        },
+      });
+      if (board) {
+        return res.status(200).json({
+          message: `deleted-board-${req.params.id}`,
+          data: board,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }

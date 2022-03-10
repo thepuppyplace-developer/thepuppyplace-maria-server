@@ -1,16 +1,20 @@
+const { user } = require(".");
 const { User } = require("../models/index");
 require("dotenv").config();
 
 module.exports = {
   async emailcheck(req, res, next) {
     try {
-      const user = await User.findOne({ where: { email: req.body.email } });
+      const user = await User.findOne({
+        where: { email: req.body.email },
+        paranoid: false,
+      });
       if (user) {
         return res
-          .status(400)
-          .json({ message: "already-user-email", check: false });
+          .status(401)
+          .json({ message: "already-user-email", data: false });
       } else {
-        return res.status(200).json({ message: "can-use-email", check: true });
+        return res.status(200).json({ message: "can-use-email", data: true });
       }
     } catch (error) {
       return next(error);
@@ -21,15 +25,16 @@ module.exports = {
     try {
       const user = await User.findOne({
         where: { nickname: req.body.nickname },
+        paranoid: false,
       });
       if (user) {
         return res
-          .status(400)
-          .json({ message: "already-user-nickname", check: false });
+          .status(401)
+          .json({ message: "already-user-nickname", data: false });
       } else {
         return res
           .status(200)
-          .json({ message: "can-use-nickname", check: true });
+          .json({ message: "can-use-nickname", data: true });
       }
     } catch (error) {
       return next(error);
@@ -38,17 +43,23 @@ module.exports = {
 
   async signup(req, res, next) {
     try {
-      var user = await User.findOne({ where: { email: req.body.email } });
+      var user = await User.findOne({
+        where: { email: req.body.email },
+        paranoid: false,
+      });
       if (user) {
         return res.status(401).json({ message: "already-use-email" });
       } else {
-        user = await User.findOne({ where: { nickname: req.body.nickname } });
+        user = await User.findOne({
+          where: { nickname: req.body.nickname },
+          paranoid: false,
+        });
         if (user) {
-          return res.status(400).json({ message: "already-use-nickname" });
+          return res.status(401).json({ message: "already-use-nickname" });
         } else {
           user = new User(req.body);
           user.save();
-          return res.status(201).json({ message: "sign-up", user: user });
+          return res.status(201).json({ message: "sign-up", data: user });
         }
       }
     } catch (error) {
@@ -56,16 +67,21 @@ module.exports = {
     }
   },
 
-  async updateUser(req, res, next) {
+  async findUser(req, res, next) {
     try {
-      const id = req.params.id;
-      await User.findOne({ where: { id } }).then((result) =>
-        result
-          ? result
-              .update(req.body)
-              .then((user) => res.status(user ? 200 : 400).json({ user }))
-          : res.status(204).json()
-      );
+      const user = await User.findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+      if (user) {
+        return res.status(200).json({
+          message: `found-user-${req.params.id}`,
+          data: user,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }
@@ -74,7 +90,7 @@ module.exports = {
   async findAllUser(req, res, next) {
     try {
       var userList = await User.findAll({
-        order: [["nickname", "DESC"]],
+        order: [["createdAt", "ASC"]],
       });
       return res.status(200).json({
         message: "found-all-user",
@@ -85,12 +101,42 @@ module.exports = {
     }
   },
 
-  deleteUser(req, res, next) {
+  async update(req, res, next) {
     try {
-      const id = req.params.id;
-      return User.destroy({ where: { id } }).then((result) => {
-        return res.status(result ? 200 : 204).json({ deleteCount: result });
+      const user = await User.findOne({
+        where: {
+          id: req.params.id,
+        },
       });
+      if (user) {
+        user.update(req.body);
+        return res.status(200).json({
+          message: `updated-user-${req.params.id}`,
+          data: user,
+        });
+      } else {
+        return res.status(204).json();
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async delete(req, res, next) {
+    try {
+      const user = await User.destroy({
+        where: {
+          id: req.params.id,
+        },
+      });
+      if (user) {
+        return res.status(200).json({
+          message: `deleted-user-${req.params.id}`,
+          data: user,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }

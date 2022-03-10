@@ -53,6 +53,11 @@ module.exports = (sequelize, DataTypes) => {
       sourceKey: "id",
     });
 
+    Board.hasMany(models.BoardLike, {
+      foreignKey: "board_id",
+      sourceKey: "id",
+    });
+
     Board.hasMany(models.BoardCommentLike, {
       foreignKey: "board_id",
       sourceKey: "id",

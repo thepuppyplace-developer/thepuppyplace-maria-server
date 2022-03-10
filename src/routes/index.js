@@ -9,7 +9,7 @@ app.use((req, res) => {
 });
 
 app.use((error, req, res, next) => {
-  console.log(error);
+  console.log(error.stack);
   return res.status(500).json({ messgae: "unknown" });
 });
 

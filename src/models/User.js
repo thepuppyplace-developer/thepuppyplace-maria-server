@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         comment: "phone_number",
       },
+      photo_url: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        comment: "user_photo",
+      },
       gender: {
         type: DataTypes.STRING(10),
         allowNull: true,
@@ -65,9 +70,8 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "user_id",
       sourceKey: "id",
     });
+    User.hasOne(models.BoardLike, { foreignKey: "user_id", sourceKey: "id" });
     User.hasMany(models.Consult, { foreignKey: "user_id", sourceKey: "id" });
-    User.hasMany(models.UserPhoto, { foreignKey: "user_id", sourceKey: "id" });
-    User.hasMany(models.BoardLike, { foreignKey: "user_id", sourceKey: "id" });
   };
   return User;
 };
