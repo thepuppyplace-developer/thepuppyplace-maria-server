@@ -33,4 +33,6 @@ router
   .patch(controllers.board.update)
   .delete(controllers.board.delete);
 
+router.route("/search/:keyword").get(controllers.board.searchBoard);
+
 module.exports = router;

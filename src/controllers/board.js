@@ -9,6 +9,8 @@ const {
   User,
 } = require("../models/index");
 
+const Op = require("sequelize").Op;
+
 module.exports = {
   async insert(req, res, next) {
     try {
@@ -355,6 +357,37 @@ module.exports = {
         return res.status(200).json({
           message: `deleted-board-${req.params.id}`,
           data: board,
+        });
+      } else {
+        return res.status(204).json();
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async searchBoard(req, res, next) {
+    try {
+      const boardList = await Board.findAll({
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.like]: "%" + req.params.keyword + "%",
+              },
+            },
+            {
+              description: {
+                [Op.like]: "%" + req.params.keyword + "%",
+              },
+            },
+          ],
+        },
+      });
+      if (boardList) {
+        return res.status(200).json({
+          message: `found-board-${req.params.keyword}`,
+          data: boardList,
         });
       } else {
         return res.status(204).json();
