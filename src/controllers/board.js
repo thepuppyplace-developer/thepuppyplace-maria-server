@@ -41,6 +41,28 @@ module.exports = {
     }
   },
 
+  async deleteBoardComment(req, res, next) {
+    try {
+      const comment = await BoardComment.destroy({
+        where: {
+          board_id: req.params.board_id,
+          user_id: req.body.user_id,
+          board_comment_id: req.params.board_comment_id,
+        },
+      });
+      if (comment) {
+        return res.status(200).json({
+          message: `deleted-board-comment-${req.params.board_comment_id}`,
+          data: comment,
+        });
+      } else {
+        return res.status(204);
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
   async insertBoardCommentComment(req, res, next) {
     try {
       const comment = new BoardCommentComment(req.body);

@@ -8,6 +8,10 @@ router
   .post(controllers.board.insertBoardComment);
 
 router
+  .route("/:board_id/:board_comment_id")
+  .delete(controllers.board.deleteBoardComment);
+
+router
   .route("/:board_id/:board_comment_id/insertcomment/:user_id")
   .post(controllers.board.insertBoardCommentComment);
 
