@@ -8,7 +8,8 @@ router
   .post(controllers.board.insertBoardComment);
 
 router
-  .route("/:board_id/:board_comment_id")
+  .route("/:board_id/:id")
+  .patch(controllers.board.updateBoardComment)
   .delete(controllers.board.deleteBoardComment);
 
 router

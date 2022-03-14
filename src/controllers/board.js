@@ -17,10 +17,14 @@ module.exports = {
       const board = new Board(req.body);
       board.user_id = req.params.user_id;
       board.save();
-      return res.status(201).json({
-        message: "insert-board",
-        data: board,
-      });
+      if (board) {
+        return res.status(201).json({
+          message: "insert-board",
+          data: board,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }
@@ -32,31 +36,13 @@ module.exports = {
       comment.user_id = req.params.user_id;
       comment.board_id = req.params.board_id;
       comment.save();
-      return res.status(201).json({
-        message: `insert-board-comment`,
-        data: comment,
-      });
-    } catch (error) {
-      return next(error);
-    }
-  },
-
-  async deleteBoardComment(req, res, next) {
-    try {
-      const comment = await BoardComment.destroy({
-        where: {
-          board_id: req.params.board_id,
-          user_id: req.body.user_id,
-          board_comment_id: req.params.board_comment_id,
-        },
-      });
       if (comment) {
-        return res.status(200).json({
-          message: `deleted-board-comment-${req.params.board_comment_id}`,
+        return res.status(201).json({
+          message: `insert-board-comment`,
           data: comment,
         });
       } else {
-        return res.status(204);
+        return res.status(204).json();
       }
     } catch (error) {
       return next(error);
@@ -70,10 +56,59 @@ module.exports = {
       comment.board_id = req.params.board_id;
       comment.board_comment_id = req.params.board_comment_id;
       comment.save();
-      return res.status(201).json({
-        message: `insert-comment-of-comment`,
-        data: comment,
+      if (comment) {
+        return res.status(201).json({
+          message: `insert-comment-of-comment`,
+          data: comment,
+        });
+      } else {
+        return res.status(204).json();
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async deleteBoardComment(req, res, next) {
+    try {
+      const comment = await BoardComment.destroy({
+        where: {
+          board_id: req.params.board_id,
+          id: req.params.id,
+          user_id: req.body.user_id,
+        },
       });
+      if (comment) {
+        return res.status(200).json({
+          message: `deleted-board-comment-${req.params.id}`,
+          data: comment,
+        });
+      } else {
+        return res.status(204);
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async updateBoardComment(req, res, next) {
+    try {
+      const comment = await BoardComment.findOne({
+        where: {
+          board_id: req.params.board_id,
+          id: req.params.id,
+          user_id: req.body.user_id,
+        },
+      });
+      if (comment) {
+        comment.update(req.body);
+        return res.status(200).json({
+          message: `updated-board-comment-${req.params.id}`,
+          data: comment,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }
@@ -216,7 +251,7 @@ module.exports = {
           },
           {
             model: BoardComment,
-            attributes: ["comment"],
+            attributes: ["comment", "createdAt"],
             include: [
               {
                 model: User,
@@ -231,8 +266,10 @@ module.exports = {
                         attributes: ["nickname", "photo_url"],
                       },
                     ],
+                    order: [["createdAt", "DESC"]],
                   },
                 ],
+                order: [["createdAt", "DESC"]],
               },
             ],
             order: [["createdAt", "DESC"]],
@@ -290,7 +327,7 @@ module.exports = {
           },
           {
             model: BoardComment,
-            attributes: ["comment"],
+            attributes: ["comment", "createdAt"],
             include: [
               {
                 model: User,
@@ -305,8 +342,10 @@ module.exports = {
                         attributes: ["nickname", "photo_url"],
                       },
                     ],
+                    order: [["createdAt", "DESC"]],
                   },
                 ],
+                order: [["createdAt", "DESC"]],
               },
             ],
             order: [["createdAt", "DESC"]],
@@ -336,7 +375,6 @@ module.exports = {
             order: [["category", "DESC"]],
           },
         ],
-        order: [["createdAt", "DESC"]],
       });
       return res.status(200).json({
         message: "found-all-board",
@@ -352,6 +390,7 @@ module.exports = {
       const board = await Board.findOne({
         where: {
           id: req.params.id,
+          user_id: req.body.user_id,
         },
       });
       if (board) {
@@ -373,6 +412,7 @@ module.exports = {
       const board = await Board.destroy({
         where: {
           id: req.params.id,
+          user_id: req.body.user_id,
         },
       });
       if (board) {
@@ -405,6 +445,32 @@ module.exports = {
             },
           ],
         },
+        include: [
+          {
+            model: User,
+            attributes: ["nickname", "photo_url"],
+          },
+          {
+            model: BoardPhoto,
+            attributes: ["photo_url"],
+          },
+          {
+            model: BoardComment,
+            attributes: ["user_id"],
+          },
+          {
+            model: BoardCommentComment,
+            attributes: ["user_id"],
+          },
+          {
+            model: BoardLike,
+            attributes: ["user_id"],
+          },
+          {
+            model: BoardCommentLike,
+            attributes: ["user_id"],
+          },
+        ],
       });
       if (boardList) {
         return res.status(200).json({
