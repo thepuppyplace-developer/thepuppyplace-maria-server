@@ -1,4 +1,3 @@
-const { user } = require(".");
 const { User } = require("../models/index");
 require("dotenv").config();
 

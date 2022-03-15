@@ -13,21 +13,24 @@ router
   .delete(controllers.board.deleteBoardComment);
 
 router
+  .route("/:board_id/:board_comment_id/:id")
+  .patch(controllers.board.updateBoardCommentOfComment)
+  .delete(controllers.board.deleteBoardCommentOfComment);
+
+router
   .route("/:board_id/:board_comment_id/insertcomment/:user_id")
   .post(controllers.board.insertBoardCommentComment);
 
-router.route("/:board_id/like/:user_id").post(controllers.board.likeBoard);
+router.route("/:board_id/like").post(controllers.board.likeBoard);
+
+router.route("/:board_id/unlike").delete(controllers.board.unlikeBoard);
 
 router
-  .route("/:board_id/unlike/:user_id")
-  .delete(controllers.board.unlikeBoard);
-
-router
-  .route("/:board_id/:board_comment_id/likecomment/:user_id")
+  .route("/:board_id/:board_comment_id/likecomment")
   .post(controllers.board.likeBoardComment);
 
 router
-  .route("/:board_id/:board_comment_id/unlikecomment/:user_id")
+  .route("/:board_id/:board_comment_id/unlikecomment")
   .delete(controllers.board.unlikeBoardComment);
 
 router.route("/").get(controllers.board.findAllBoard);

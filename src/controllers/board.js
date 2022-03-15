@@ -114,19 +114,66 @@ module.exports = {
     }
   },
 
+  async deleteBoardCommentOfComment(req, res, next) {
+    try {
+      const comment = await BoardCommentComment.destroy({
+        where: {
+          board_id: req.params.board_id,
+          board_comment_id: req.params.board_comment_id,
+          id: req.params.id,
+          user_id: req.body.user_id,
+        },
+      });
+      if (comment) {
+        return res.status(200).json({
+          message: `deleted-board-comment-of-comment-${req.params.id}`,
+          data: comment,
+        });
+      } else {
+        return res.status(204).json();
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async updateBoardCommentOfComment(req, res, next) {
+    try {
+      const comment = await BoardCommentComment.findOne({
+        where: {
+          board_id: req.params.board_id,
+          board_comment_id: req.params.board_comment_id,
+          id: req.params.id,
+          user_id: req.body.user_id,
+        },
+      });
+      if (comment) {
+        comment.update(req.body);
+        return res.status(200).json({
+          message: `updated-board-comment-of-comment-${req.params.id}`,
+          data: comment,
+        });
+      } else {
+        return res.status(204).json();
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
+
   async likeBoard(req, res, next) {
     try {
       const check = await BoardLike.findOne({
         where: {
           board_id: req.params.board_id,
-          user_id: req.params.user_id,
+          user_id: req.body.user_id,
         },
       });
       if (check) {
         return res.status(204).json();
       } else {
         const like = new BoardLike(req.body);
-        like.user_id = req.params.user_id;
+        like.user_id = req.body.user_id;
         like.board_id = req.params.board_id;
         like.save();
         if (like) {
@@ -148,14 +195,14 @@ module.exports = {
       const check = await BoardLike.findOne({
         where: {
           board_id: req.params.board_id,
-          user_id: req.params.user_id,
+          user_id: req.body.user_id,
         },
       });
       if (check) {
         const like = await BoardLike.destroy({
           where: {
             board_id: req.params.board_id,
-            user_id: req.params.user_id,
+            user_id: req.body.user_id,
           },
         });
         if (like) {
@@ -180,14 +227,14 @@ module.exports = {
         where: {
           board_id: req.params.board_id,
           board_comment_id: req.params.board_comment_id,
-          user_id: req.params.user_id,
+          user_id: req.body.user_id,
         },
       });
       if (check) {
         return res.status(204).json();
       } else {
         const like = new BoardCommentLike(req.body);
-        like.user_id = req.params.user_id;
+        like.user_id = req.body.user_id;
         like.board_id = req.params.board_id;
         like.board_comment_id = req.params.board_comment_id;
         like.save();
@@ -207,7 +254,7 @@ module.exports = {
         where: {
           board_id: req.params.board_id,
           board_comment_id: req.params.board_comment_id,
-          user_id: req.params.user_id,
+          user_id: req.body.user_id,
         },
       });
       if (check) {
@@ -215,7 +262,7 @@ module.exports = {
           where: {
             board_id: req.params.board_id,
             board_comment_id: req.params.board_comment_id,
-            user_id: req.params.user_id,
+            user_id: req.body.user_id,
           },
         });
         if (like) {
@@ -251,7 +298,6 @@ module.exports = {
           },
           {
             model: BoardComment,
-            attributes: ["comment", "createdAt"],
             include: [
               {
                 model: User,
@@ -327,7 +373,6 @@ module.exports = {
           },
           {
             model: BoardComment,
-            attributes: ["comment", "createdAt"],
             include: [
               {
                 model: User,
@@ -376,10 +421,14 @@ module.exports = {
           },
         ],
       });
-      return res.status(200).json({
-        message: "found-all-board",
-        data: boardList,
-      });
+      if (boardList) {
+        return res.status(200).json({
+          message: "found-all-board",
+          data: boardList,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }
