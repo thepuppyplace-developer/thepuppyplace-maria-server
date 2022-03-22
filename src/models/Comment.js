@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
-  const BoardComment = sequelize.define(
-    "BoardComment",
+  const Comment = sequelize.define(
+    "Comment",
     {
       comment: {
         type: DataTypes.STRING(200),
         allowNull: false,
-        comment: "board-comment",
+        comment: "comment",
       },
     },
     {
@@ -13,29 +13,29 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
       charset: "utf8",
       collate: "utf8_general_ci",
-      tableName: "BoardComment",
+      tableName: "Comment",
     }
   );
-  BoardComment.associate = (models) => {
-    BoardComment.hasMany(models.BoardCommentComment, {
-      foreignKey: "board_comment_id",
+  Comment.associate = (models) => {
+    Comment.hasMany(models.Comment, {
+      foreignKey: "comment_id",
       sourceKey: "id",
     });
 
-    BoardComment.hasMany(models.BoardCommentLike, {
-      foreignKey: "board_comment_id",
+    Comment.hasMany(models.CommentLike, {
+      foreignKey: "comment_id",
       sourceKey: "id",
     });
 
-    BoardComment.belongsTo(models.User, {
+    Comment.belongsTo(models.User, {
       foreignKey: "user_id",
       sourceKey: "id",
     });
 
-    BoardComment.belongsTo(models.Board, {
+    Comment.belongsTo(models.Board, {
       foreignKey: "board_id",
       sourceKey: "id",
     });
   };
-  return BoardComment;
+  return Comment;
 };

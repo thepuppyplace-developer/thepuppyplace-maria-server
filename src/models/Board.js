@@ -38,17 +38,12 @@ module.exports = (sequelize, DataTypes) => {
       sourceKey: "id",
     });
 
-    Board.hasMany(models.BoardComment, {
+    Board.hasMany(models.Comment, {
       foreignKey: "board_id",
       sourceKey: "id",
     });
 
-    Board.hasMany(models.BoardCategory, {
-      foreignKey: "board_id",
-      sourceKey: "id",
-    });
-
-    Board.hasMany(models.BoardCommentComment, {
+    Board.hasOne(models.BoardCategory, {
       foreignKey: "board_id",
       sourceKey: "id",
     });
@@ -58,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       sourceKey: "id",
     });
 
-    Board.hasMany(models.BoardCommentLike, {
+    Board.hasMany(models.CommentLike, {
       foreignKey: "board_id",
       sourceKey: "id",
     });

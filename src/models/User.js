@@ -58,15 +58,8 @@ module.exports = (sequelize, DataTypes) => {
   );
   User.associate = (models) => {
     User.hasMany(models.Board, { foreignKey: "user_id", sourceKey: "id" });
-    User.hasMany(models.BoardComment, {
-      foreignKey: "user_id",
-      sourceKey: "id",
-    });
-    User.hasMany(models.BoardCommentComment, {
-      foreignKey: "user_id",
-      sourceKey: "id",
-    });
-    User.hasMany(models.BoardCommentLike, {
+    User.hasMany(models.Comment, { foreignKey: "user_id", sourceKey: "id" });
+    User.hasMany(models.CommentLike, {
       foreignKey: "user_id",
       sourceKey: "id",
     });

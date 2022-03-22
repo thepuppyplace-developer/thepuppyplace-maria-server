@@ -1,9 +1,8 @@
 const {
   Board,
-  BoardComment,
+  Comment,
   BoardLike,
-  BoardCommentComment,
-  BoardCommentLike,
+  CommentLike,
   BoardPhoto,
   BoardCategory,
   User,
@@ -30,15 +29,15 @@ module.exports = {
     }
   },
 
-  async insertBoardComment(req, res, next) {
+  async insertComment(req, res, next) {
     try {
-      const comment = new BoardComment(req.body);
+      const comment = new Comment(req.body);
       comment.user_id = req.params.user_id;
       comment.board_id = req.params.board_id;
       comment.save();
       if (comment) {
         return res.status(201).json({
-          message: `insert-board-comment`,
+          message: `insert-comment`,
           data: comment,
         });
       } else {
@@ -49,29 +48,9 @@ module.exports = {
     }
   },
 
-  async insertBoardCommentComment(req, res, next) {
+  async deleteComment(req, res, next) {
     try {
-      const comment = new BoardCommentComment(req.body);
-      comment.user_id = req.params.user_id;
-      comment.board_id = req.params.board_id;
-      comment.board_comment_id = req.params.board_comment_id;
-      comment.save();
-      if (comment) {
-        return res.status(201).json({
-          message: `insert-comment-of-comment`,
-          data: comment,
-        });
-      } else {
-        return res.status(204).json();
-      }
-    } catch (error) {
-      return next(error);
-    }
-  },
-
-  async deleteBoardComment(req, res, next) {
-    try {
-      const comment = await BoardComment.destroy({
+      const comment = await Comment.destroy({
         where: {
           board_id: req.params.board_id,
           id: req.params.id,
@@ -80,7 +59,7 @@ module.exports = {
       });
       if (comment) {
         return res.status(200).json({
-          message: `deleted-board-comment-${req.params.id}`,
+          message: `deleted-comment-${req.params.id}`,
           data: comment,
         });
       } else {
@@ -91,9 +70,9 @@ module.exports = {
     }
   },
 
-  async updateBoardComment(req, res, next) {
+  async updateComment(req, res, next) {
     try {
-      const comment = await BoardComment.findOne({
+      const comment = await Comment.findOne({
         where: {
           board_id: req.params.board_id,
           id: req.params.id,
@@ -103,54 +82,7 @@ module.exports = {
       if (comment) {
         comment.update(req.body);
         return res.status(200).json({
-          message: `updated-board-comment-${req.params.id}`,
-          data: comment,
-        });
-      } else {
-        return res.status(204).json();
-      }
-    } catch (error) {
-      return next(error);
-    }
-  },
-
-  async deleteBoardCommentOfComment(req, res, next) {
-    try {
-      const comment = await BoardCommentComment.destroy({
-        where: {
-          board_id: req.params.board_id,
-          board_comment_id: req.params.board_comment_id,
-          id: req.params.id,
-          user_id: req.body.user_id,
-        },
-      });
-      if (comment) {
-        return res.status(200).json({
-          message: `deleted-board-comment-of-comment-${req.params.id}`,
-          data: comment,
-        });
-      } else {
-        return res.status(204).json();
-      }
-    } catch (error) {
-      return next(error);
-    }
-  },
-
-  async updateBoardCommentOfComment(req, res, next) {
-    try {
-      const comment = await BoardCommentComment.findOne({
-        where: {
-          board_id: req.params.board_id,
-          board_comment_id: req.params.board_comment_id,
-          id: req.params.id,
-          user_id: req.body.user_id,
-        },
-      });
-      if (comment) {
-        comment.update(req.body);
-        return res.status(200).json({
-          message: `updated-board-comment-of-comment-${req.params.id}`,
+          message: `updated-comment-${req.params.id}`,
           data: comment,
         });
       } else {
@@ -221,19 +153,19 @@ module.exports = {
     }
   },
 
-  async likeBoardComment(req, res, next) {
+  async likeComment(req, res, next) {
     try {
-      const check = await BoardCommentLike.findOne({
+      const check = await CommentLike.findOne({
         where: {
           board_id: req.params.board_id,
-          board_comment_id: req.params.board_comment_id,
+          comment_id: req.params.comment_id,
           user_id: req.body.user_id,
         },
       });
       if (check) {
         return res.status(204).json();
       } else {
-        const like = new BoardCommentLike(req.body);
+        const like = new CommentLike(req.body);
         like.user_id = req.body.user_id;
         like.board_id = req.params.board_id;
         like.board_comment_id = req.params.board_comment_id;
@@ -250,10 +182,10 @@ module.exports = {
 
   async unlikeBoardComment(req, res, next) {
     try {
-      const check = await BoardCommentLike.findOne({
+      const check = await CommentLike.findOne({
         where: {
           board_id: req.params.board_id,
-          board_comment_id: req.params.board_comment_id,
+          comment_id: req.params.comment_id,
           user_id: req.body.user_id,
         },
       });
