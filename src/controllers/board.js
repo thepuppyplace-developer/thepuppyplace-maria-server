@@ -226,7 +226,6 @@ module.exports = {
           },
           {
             model: BoardPhoto,
-            attributes: ["photo_url"],
           },
           {
             model: BoardComment,
@@ -297,6 +296,7 @@ module.exports = {
         include: [
           {
             model: User,
+            as: "user",
             attributes: ["nickname", "photo_url"],
           },
           {

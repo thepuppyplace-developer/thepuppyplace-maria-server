@@ -66,7 +66,7 @@ module.exports = {
     }
   },
 
-  async findUser(req, res, next) {
+  async findOneUser(req, res, next) {
     try {
       const user = await User.findOne({
         where: {
@@ -91,10 +91,14 @@ module.exports = {
       var userList = await User.findAll({
         order: [["createdAt", "ASC"]],
       });
-      return res.status(200).json({
-        message: "found-all-user",
-        data: userList,
-      });
+      if (userList) {
+        return res.status(200).json({
+          message: "found-all-user",
+          data: userList,
+        });
+      } else {
+        return res.status(204).json();
+      }
     } catch (error) {
       return next(error);
     }
